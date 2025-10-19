@@ -28,6 +28,7 @@ model Order {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   orderId     String   @unique
   telegramId  String
+  username    String
   amountNano  String   // valor em nanotons (string porque pode ser grande)
   status      String   @default("PENDING") // PENDING | PAID | EXPIRED
   txHash      String?

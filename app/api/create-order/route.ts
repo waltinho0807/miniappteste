@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
-    const { telegramId, payer } = await req.json();
+    const { telegramId, username, payer } = await req.json();
 
     if (!telegramId) {
       return NextResponse.json({ error: "telegramId é obrigatório" }, { status: 400 });
@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
         orderId,
         telegramId,
         payer,
+        username,
         amountNano,
         memo,
         status: "PENDING",

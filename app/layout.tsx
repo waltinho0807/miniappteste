@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TonConnectProviderWrapper } from '../app/components/TonConnectProviderWrapper';
 import Script from 'next/script';
+import NavBar from "./components/NavBar";
 
 
 declare global{
@@ -43,7 +44,7 @@ export default function RootLayout({
       <head>
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive"/>
       </head>
-      
+      <NavBar/>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

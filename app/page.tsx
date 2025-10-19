@@ -1,103 +1,129 @@
-import Image from "next/image";
+"use client";
+import React from "react";
+import { TonConnect, TonConnectButton, useTonConnectUI, useTonAddress, toUserFriendlyAddress } from "@tonconnect/ui-react";
+import { toNano } from "@ton/ton"; // util para converter TON -> nanotons
+import { useState, useEffect } from "react";
 
-export default function Home() {
+
+
+const RECEIVER = process.env.NEXT_PUBLIC_TON_RECEIVER!;
+
+export default function TonPay({ telegramId, amountTon }: { telegramId: string, amountTon: string }) {
+  // amountTon exemplo: "0.1"
+  
+  const [loading, setLoading] = useState(false);
+  const [ tonConnectUI, setOptions ] = useTonConnectUI();
+
+  const [addressUser, setAddressUser] = useState('');
+
+  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  //const [payer, setPayer] = useState("");
+  const [message, setMessage] = useState("");
+
+  const userFriendlyAddress = useTonAddress();
+  const rawAddress = useTonAddress(false);
+
+  const memoText = "MEU_MEMO_UNICO_12345";
+
+  // Codifica para base64
+  const memoBase64 = Buffer.from(memoText, "utf-8").toString("base64");
+
+
+  const transaction = {
+    validUntil: Math.floor(Date.now() / 1000) + 600, // 5 minutes
+    messages: [
+      {
+        address:
+          "0QDsvzjY3GbKhT9kon26B17LWi5UojhLfARtEDw980BvsTLL", // message destination in user-friendly format
+        amount: "20000000", // Toncoin in nanotons
+        payload: memoBase64
+      },
+    ],
+  };
+
+  const test = async () => {
+    setAddressUser(userFriendlyAddress);
+     return tonConnectUI.sendTransaction(transaction)
+  }
+  
+  const testUser = async  (e: React.FormEvent) => {
+    e.preventDefault();
+
+     const payer = userFriendlyAddress;
+
+     const res = await fetch("/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, firstName, payer }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      setMessage("Usuário criado com sucesso!");
+      setUsername("");
+      setFirstName("");
+      //setPayer("");
+    } else {
+      setMessage(data.error || "Erro ao criar usuário");
+    }
+  }
+
+   useEffect(() => {
+  if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+  } else {
+    console.log("App rodando fora do Telegram (modo dev)");
+  }
+
+  
+}, []);
+
+
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div>
+      <TonConnectButton/>
+      <h5>Testando outro tipo de button</h5>
+      <button onClick={() => tonConnectUI.openModal()}>
+        Conectar carteira
+      </button>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+     { userFriendlyAddress && (
+      <div>
+        <span>User-friendly address: {userFriendlyAddress}</span>
+        <span>Raw address: {rawAddress}</span>
+      </div>
+      )}
+
+      <button onClick={test}>
+        Send transaction
+      </button>
+      {addressUser}
+      <div>Salvar no banco com prisma</div>
+      <form onSubmit={testUser} className="flex flex-col gap-2">
+      <input
+        type="text"
+        placeholder="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        className="border p-2 rounded"
+      />
+      <input
+        type="text"
+        placeholder="first name"
+        value={firstName}
+        onChange={(e) => setFirstName(e.target.value)}
+        className="border p-2 rounded"
+      />
+      <button type="submit" className="bg-blue-600 text-white p-2 rounded">
+        Salvar Usuário
+      </button>
+      {message && <p>{message}</p>}
+    </form>
     </div>
   );
 }

@@ -8,8 +8,8 @@ export default function NavBar() {
       <Link href="/teste-order">Create Order</Link>
       <Link href="/payments">Payments</Link>
       <Link href="/check-payments">Check Payments</Link>
-      <Link href="/expired-ordes">Check Payments</Link>
-      <Link href="/export-ordes">Check Payments</Link>
+      <Link href="/expired-orders">expired</Link>
+      <Link href="/export-orders">export</Link>
     </nav>
   );
 }

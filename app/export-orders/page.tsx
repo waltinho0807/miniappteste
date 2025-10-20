@@ -34,7 +34,7 @@ export default function ExportOrdersPage () {
     };
 
     const handleExportExcel = () => {
-        window.location.href = "/api/export-orders";
+        window.open("/api/export-orders", "_blank");
     };
 
     useEffect(() => {

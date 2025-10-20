@@ -22,7 +22,7 @@ export default function ExportOrdersPage () {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const res = await fetch("/api/export-orders?status=PAID");
+            const res = await fetch("/api/orders?status=PAID");
             const data = await res.json();
             setOrders(data.orders || []); 
              

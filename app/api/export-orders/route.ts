@@ -20,8 +20,8 @@ export async function GET() {
             { header:"Telegram ID",key:"telegramId",width: 20 },
             { header:"Username",key:"username",width: 25 },
             { header:"Payer",key:"payer",width: 35 },
-            { header:"Amount",key:"amount",width: 15 },
-            { header:"Status",key:"staus",width: 12 },
+            { header:"Amount",key:"amountNano",width: 15 },
+            { header:"Status",key:"status",width: 12 },
             { header:"Memo",key:"memo",width: 50 },
             { header:"Tx hash",key:"txHash",width: 50 },
             { header:"Created At",key:"createdAt",width: 25 },
@@ -48,9 +48,8 @@ export async function GET() {
         return new NextResponse(buffer, {
             status: 200,
             headers: {
-                "Content-type":
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "Content-Disposition": "attachment; filename=paid-orders.xlsx",    
+                "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Content-Disposition": "attachment; filename=paid-orders.xlsx",
             }
         })
     } catch (error) {

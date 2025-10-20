@@ -11,7 +11,7 @@ export default function ExpireOrdersPage() {
     setMessage("Verificando ordens expiradas...");
 
     try {
-      const res = await fetch("/api/expire-orders", { method: "GET" });
+      const res = await fetch("/api/expired-orders", { method: "GET" });
       const data = await res.json();
 
       if (data.success) {
